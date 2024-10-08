@@ -1,0 +1,152 @@
+plugins {
+	id "com.crystaelix.loom" version "jitpack-0a007f07"
+	id "eclipse"
+	id "idea"
+	id "maven-publish"
+	id "net.kyori.blossom" version "[1,2)"
+	id "me.modmuss50.mod-publish-plugin" version "0.7.4"
+}
+
+repositories {
+	// Add repositories to retrieve artifacts from in here.
+	mavenCentral()
+	flatDir {
+		dirs "libs"
+	}
+	exclusiveContent {
+		forRepository {
+			maven {
+				url = "https://repo.cleanroommc.com/releases/"
+			}
+		}
+		filter {
+			includeGroup "zone.rong"
+		}
+	}
+	exclusiveContent {
+		forRepository {
+			maven {
+				url = "https://maven.blamejared.com/"
+			}
+		}
+		filter {
+			includeGroup "mezz.jei"
+		}
+	}
+	exclusiveContent {
+		forRepository {
+			maven {
+				url = "https://cursemaven.com/"
+			}
+		}
+		filter {
+			includeGroup "curse.maven"
+		}
+	}
+}
+
+version = mod_version
+group = mod_group
+archivesBaseName = "${mod_name}-1.12.2"
+
+java {
+	toolchain.languageVersion = JavaLanguageVersion.of(8)
+	withSourcesJar()
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.encoding = "UTF-8"
+}
+
+loom {
+	silentMojangMappingsLicense()
+	legacyForge {
+		// Uncomment the following line for early mixin json configs.
+		//mixinConfig "${mod_id}.mixins.json"
+	}
+
+	mixin.defaultRefmapName = "${mod_id}.refmap.json"
+	interfaceInjection.enableDependencyInterfaceInjection = false
+	runs {
+		configureEach {
+			property "fabric.log.console.level", "debug"
+			environmentVariable "MC_VERSION", "1.12.2"
+		}
+		client {
+			programArg "--username=Dev"
+			vmArg "-Xmx7G"
+		}
+		server {
+			vmArg "-Xmx3G"
+		}
+	}
+	generatedIntermediateMappings()
+}
+
+dependencies {
+	// Use an updated version of log4j
+	implementation "org.apache.logging.log4j:log4j-core:${log4j_version}"
+
+	minecraft "com.mojang:minecraft:1.12.2"
+	mappings "de.oceanlabs.mcp:mcp_stable:${mcp_version}"
+	legacyForge "net.minecraftforge:forge:${forge_version}"
+
+	// Uncomment the following lines for mixins.
+	//implementation("zone.rong:mixinbooter:${mixinbooter_version}") {transitive = false}
+	//annotationProcessor("zone.rong:mixinbooter:${mixinbooter_version}") {transitive = false}
+
+	// Example dependencies
+	modImplementation "mezz.jei:jei_1.12.2:${jei_version}"
+}
+
+def replacements = [
+	"0@VERSION@": version
+]
+
+blossom {
+	replaceToken(replacements)
+}
+
+processResources {
+	inputs.properties(replacements)
+	filesMatching(["mcmod.info", "META-INF/mods.toml", "META-INF/neoforge.mods.toml"]) {
+		filter {
+			it.replace(replacements)
+		}
+	}
+}
+
+def manifestAttributes = [
+	"Specification-Title": mod_name,
+	"Specification-Vendor": mod_author,
+	"Specification-Version": mod_spec_version,
+	"Implementation-Title": archivesBaseName,
+	"Implementation-Version": mod_version,
+	"Implementation-Vendor": mod_author,
+
+	// Uncomment the following lines for early mixin json configs.
+	//"TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
+	//"ForceLoadAsMod": "true",
+]
+
+jar {
+	manifest.attributes(manifestAttributes)
+}
+
+sourcesJar {
+	manifest.attributes(manifestAttributes)
+}
+
+tasks.withType(net.fabricmc.loom.task.RunGameTask).configureEach {
+	javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+}
+
+// Please refer to Mod Publish Plugin's documentation on how to use the plugin to upload projects to CurseForge/Modrinth.
+publishMods {
+	file = remapJar.archiveFile
+	version = displayName = "1.12.2-${mod_version}"
+	changelog = file("changelog.md").text
+	type = ALPHA
+	modLoaders.add("forge")
+	additionalFiles.from(remapSourcesJar.archiveFile)
+}

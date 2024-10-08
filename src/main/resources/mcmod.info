@@ -1,0 +1,12 @@
+[
+	{
+		"modid": "examplemod",
+		"version": "0@VERSION@",
+		"name": "ExampleMod",
+		"description": "An example mod.",
+		"logoFile": "",
+		"credits": "",
+		"authorList": ["ExampleDev"],
+		"url": ""
+	}
+]
