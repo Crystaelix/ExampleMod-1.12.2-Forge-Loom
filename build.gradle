@@ -49,8 +49,18 @@ version = mod_version
 group = mod_group
 archivesBaseName = "${mod_name}-1.12.2"
 
+sourceSets {
+	main {
+		// Make Gradle output resources and classes to the same directory
+		output.resourcesDir = java.destinationDirectory = layout.buildDirectory.dir("outputs/main")
+	}
+}
+
 java {
-	toolchain.languageVersion = JavaLanguageVersion.of(8)
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(8)
+		vendor = JvmVendorSpec.AZUL
+	}
 	withSourcesJar()
 }
 
@@ -135,10 +145,6 @@ jar {
 
 sourcesJar {
 	manifest.attributes(manifestAttributes)
-}
-
-tasks.withType(net.fabricmc.loom.task.RunGameTask).configureEach {
-	javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
 }
 
 // Please refer to Mod Publish Plugin's documentation on how to use the plugin to upload projects to CurseForge/Modrinth.
