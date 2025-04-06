@@ -76,7 +76,6 @@ loom {
 	}
 
 	mixin.defaultRefmapName = "${mod_id}.refmap.json"
-	interfaceInjection.enableDependencyInterfaceInjection = false
 	runs {
 		configureEach {
 			property "fabric.log.console.level", "debug"
