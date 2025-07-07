@@ -135,7 +135,9 @@ def manifestAttributes = [
 
 	// Uncomment the following lines for early mixin json configs.
 	//"TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
+	//"TweakOrder": "0",
 	//"ForceLoadAsMod": "true",
+	//"FMLCorePluginContainsFMLMod": "true",
 ]
 
 jar {
