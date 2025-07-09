@@ -8,7 +8,7 @@ plugins {
 }
 
 repositories {
-	// Add repositories to retrieve artifacts from in here.
+	// Add repositories to retrieve artifacts from, here
 	mavenCentral()
 	flatDir {
 		dirs "libs"
@@ -21,6 +21,16 @@ repositories {
 		}
 		filter {
 			includeGroup "zone.rong"
+		}
+	}
+	exclusiveContent {
+		forRepository {
+			maven {
+				url = "https://maven.crystaelix.com/releases/"
+			}
+		}
+		filter {
+			includeGroup "com.crystaelix"
 		}
 	}
 	exclusiveContent {
@@ -71,8 +81,8 @@ tasks.withType(JavaCompile).configureEach {
 loom {
 	silentMojangMappingsLicense()
 	legacyForge {
-		// Uncomment the following line for early mixin json configs.
-		//mixinConfig "${mod_id}.mixins.json"
+		// Specify early mixin json configs here, requires MixinConBooter
+		mixinConfig "${mod_id}.mixins.json"
 	}
 
 	mixin.defaultRefmapName = "${mod_id}.refmap.json"
@@ -96,13 +106,16 @@ dependencies {
 	// Use an updated version of log4j
 	implementation "org.apache.logging.log4j:log4j-core:${log4j_version}"
 
+	// Minecraft dependencies, required
 	minecraft "com.mojang:minecraft:1.12.2"
 	mappings "de.oceanlabs.mcp:mcp_stable:${mcp_version}"
 	legacyForge "net.minecraftforge:forge:${forge_version}"
 
-	// Uncomment the following lines for mixins.
-	//implementation("zone.rong:mixinbooter:${mixinbooter_version}") {transitive = false}
-	//annotationProcessor("zone.rong:mixinbooter:${mixinbooter_version}") {transitive = false}
+	// Mixin dependencies, use if mixin is required
+	implementation("zone.rong:mixinbooter:${mixinbooter_version}") {transitive = false}
+	annotationProcessor("zone.rong:mixinbooter:${mixinbooter_version}") {transitive = false}
+	// MixinConBooter is only needed if early mixins are required
+	implementation "com.crystaelix:mixinconbooter:${mixinconbooter_version}"
 
 	// Example dependencies
 	modImplementation "mezz.jei:jei_1.12.2:${jei_version}"
@@ -132,12 +145,6 @@ def manifestAttributes = [
 	"Implementation-Title": archivesBaseName,
 	"Implementation-Version": mod_version,
 	"Implementation-Vendor": mod_author,
-
-	// Uncomment the following lines for early mixin json configs.
-	//"TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
-	//"TweakOrder": "0",
-	//"ForceLoadAsMod": "true",
-	//"FMLCorePluginContainsFMLMod": "true",
 ]
 
 jar {
@@ -148,7 +155,7 @@ sourcesJar {
 	manifest.attributes(manifestAttributes)
 }
 
-// Please refer to Mod Publish Plugin's documentation on how to use the plugin to upload projects to CurseForge/Modrinth.
+// Please refer to Mod Publish Plugin's documentation on how to use the plugin to upload projects to CurseForge/Modrinth
 publishMods {
 	file = remapJar.archiveFile
 	version = displayName = "1.12.2-${mod_version}"
@@ -156,4 +163,21 @@ publishMods {
 	type = ALPHA
 	modLoaders.add("forge")
 	additionalFiles.from(sourcesJar.archiveFile)
+
+	curseforge {
+		projectId = curseforge_project_id
+		accessToken = providers.gradleProperty("curseforge.token")
+		minecraftVersions.add("1.12.2")
+		// Mixin dependencies, use if mixin is required
+		// MixinConBooter is only needed if simple early mixins are required
+		requires "mixin-booter", "mixinconbooter"
+	}
+	modrinth {
+		projectId = modrinth_project_id
+		accessToken = providers.gradleProperty("modrinth.token")
+		minecraftVersions.add("1.12.2")
+		// Mixin dependencies, use if mixin is required
+		// MixinConBooter is only needed if simple early mixins are required
+		requires "mixinbooter", "mixinconbooter"
+	}
 }
