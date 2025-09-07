@@ -1,9 +1,9 @@
 plugins {
-	id "com.crystaelix.loom" version "1.10.0"
+	id "com.crystaelix.loom" version "1.11.0"
 	id "eclipse"
 	id "idea"
 	id "maven-publish"
-	id "net.kyori.blossom" version "[1,2)"
+	id "com.crystaelix.blossom" version "1.3.2"
 	id "me.modmuss50.mod-publish-plugin" version "0.8.4"
 }
 
@@ -57,7 +57,8 @@ repositories {
 
 version = mod_version
 group = mod_group
-archivesBaseName = "${mod_name}-1.12.2"
+def archivesName = "${mod_name}-1.12.2"
+base.archivesName = archivesName
 
 sourceSets {
 	main {
@@ -142,7 +143,7 @@ def manifestAttributes = [
 	"Specification-Title": mod_name,
 	"Specification-Vendor": mod_author,
 	"Specification-Version": mod_spec_version,
-	"Implementation-Title": archivesBaseName,
+	"Implementation-Title": archivesName,
 	"Implementation-Version": mod_version,
 	"Implementation-Vendor": mod_author,
 ]
