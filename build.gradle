@@ -104,9 +104,6 @@ loom {
 }
 
 dependencies {
-	// Use an updated version of log4j
-	implementation "org.apache.logging.log4j:log4j-core:${log4j_version}"
-
 	// Minecraft dependencies, required
 	minecraft "com.mojang:minecraft:1.12.2"
 	mappings "de.oceanlabs.mcp:mcp_stable:${mcp_version}"
