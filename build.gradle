@@ -61,9 +61,9 @@ def archivesName = "${mod_name}-1.12.2"
 base.archivesName = archivesName
 
 sourceSets {
-	main {
+	configureEach {
 		// Make Gradle output resources and classes to the same directory
-		output.resourcesDir = java.destinationDirectory = layout.buildDirectory.dir("outputs/main")
+		output.resourcesDir = java.destinationDirectory = layout.buildDirectory.dir("outputs/${name}")
 	}
 }
 
