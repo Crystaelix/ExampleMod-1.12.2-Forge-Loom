@@ -1,5 +1,5 @@
 plugins {
-	id "com.crystaelix.loom" version "1.13-SNAPSHOT"
+	id "com.crystaelix.loom" version "1.17-SNAPSHOT"
 	id "eclipse"
 	id "idea"
 	id "maven-publish"
@@ -111,8 +111,6 @@ dependencies {
 	// Mixin dependencies, use if mixin is required
 	implementation("zone.rong:mixinbooter:${mixinbooter_version}") {transitive = false}
 	annotationProcessor("zone.rong:mixinbooter:${mixinbooter_version}") {transitive = false}
-	// MixinConBooter is only needed if early mixins are required
-	implementation "com.crystaelix:mixinconbooter:${mixinconbooter_version}"
 
 	// Example dependencies
 	modImplementation "mezz.jei:jei_1.12.2:${jei_version}"
@@ -165,16 +163,17 @@ publishMods {
 		projectId = curseforge_project_id
 		accessToken = providers.gradleProperty("curseforge.token")
 		minecraftVersions.add("1.12.2")
+		client = true
+		server = true
 		// Mixin dependencies, use if mixin is required
-		// MixinConBooter is only needed if simple early mixins are required
-		requires "mixin-booter", "mixinconbooter"
+		requires "mixin-booter"
 	}
 	modrinth {
 		projectId = modrinth_project_id
 		accessToken = providers.gradleProperty("modrinth.token")
 		minecraftVersions.add("1.12.2")
+		environment = CLIENT_AND_SERVER
 		// Mixin dependencies, use if mixin is required
-		// MixinConBooter is only needed if simple early mixins are required
-		requires "mixinbooter", "mixinconbooter"
+		requires "mixinbooter"
 	}
 }
